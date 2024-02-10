@@ -1,0 +1,121 @@
+.border {
+  border: 1px solid black;
+}
+
+@font-face {
+  font-family: "Source Sans Pro";
+  src: url("./fonts/SourceSansPro-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Archive;
+  src: url("./fonts/Archive-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Brandon Grotesque";
+  src: url("./fonts/BrandonGrotesque-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body,
+html {
+  font-family: "Source Sans Pro";
+}
+
+.button {
+  background: hsla(277, 79%, 84%, 0.4);
+
+  background: linear-gradient(
+    45deg,
+    hsla(277, 79%, 84%, 0.4) 0%,
+    hsla(204, 95%, 77%, 0.4) 100%
+  );
+
+  background: -moz-linear-gradient(
+    45deg,
+    hsla(277, 79%, 84%, 0.4) 0%,
+    hsla(204, 95%, 77%, 0.4) 100%
+  );
+
+  background: -webkit-linear-gradient(
+    45deg,
+    hsla(277, 79%, 84%, 0.4) 0%,
+    hsla(204, 95%, 77%, 0.4) 100%
+  );
+
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#DDB4F6", endColorstr="#8DD0FC", GradientType=1 );
+}
+.button-a {
+  background: hsla(277, 79%, 84%, 1);
+
+  background: linear-gradient(
+    45deg,
+    hsla(277, 79%, 84%, 1) 0%,
+    hsla(204, 95%, 77%, 1) 100%
+  );
+
+  background: -moz-linear-gradient(
+    45deg,
+    hsla(277, 79%, 84%, 1) 0%,
+    hsla(204, 95%, 77%, 1) 100%
+  );
+
+  background: -webkit-linear-gradient(
+    45deg,
+    hsla(277, 79%, 84%, 1) 0%,
+    hsla(204, 95%, 77%, 1) 100%
+  );
+
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#DDB4F6", endColorstr="#8DD0FC", GradientType=1 );
+}
+
+.center-align {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -25px 0 0 -25px;
+}
+.animation {
+  animation: mymove 1.5s infinite;
+}
+
+@keyframes mymove {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#element {
+  -webkit-animation: 1s ease 1s normal forwards infinite fadein;
+  animation: 1s ease 1s normal forwards infinite fadein;
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
