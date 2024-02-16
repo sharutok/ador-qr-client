@@ -25,7 +25,13 @@ function App() {
     batch_number: null
   })
   const [module, setModule] = useState(0)
-  const contextValue = { userLogin, setUserLogin, count, setCount, page, setPage, module, setModule, ocrValue, setOCRValue, formValue, setFormValue, selectedSuggestion, setSelectedSuggestion }
+  const [dialogBopen, setDialogBOpen] = useState(false);
+  const [btnSaving, setBtnSaving] = useState(false)
+  const [snack, setSnack] = useState({
+    status: false,
+    mess: null
+  });
+  const contextValue = { userLogin, setUserLogin, count, setCount, page, setPage, module, setModule, ocrValue, setOCRValue, formValue, setFormValue, selectedSuggestion, setSelectedSuggestion, dialogBopen, btnSaving, setBtnSaving, setDialogBOpen, snack, setSnack }
   return (
     < >
       <QueryClientProvider client={queryClient}>

@@ -14,7 +14,7 @@ export default function Table({ thead, tbody }) {
                             return (
                                 <th className='th ' key={i}>
                                     <>
-                                        {h.thead_name}{h.sortSymbol && <IconButton>{<RiExpandUpDownLine size='20' color="#ffff" className='cursor-pointer' />}</IconButton>}
+                                        {h}
                                     </ >
                                 </th>
 

@@ -3,6 +3,7 @@ import { IoLogOutOutline, IoList, IoCloudUploadOutline } from "react-icons/io5";
 import { AppContext } from '../App';
 import { useAtom } from 'jotai'
 import { moduleAtom } from './hookes';
+import { deleteCookies } from './CookiesS';
 
 function SideBar() {
     const [_module, _setModule] = useAtom(moduleAtom)
@@ -11,6 +12,10 @@ function SideBar() {
         _setModule(_module_)
     }
 
+    function handleLogOut() {
+        deleteCookies()
+        window.location.href = '/login'
+    }
 
     return (
         <div className='h-[100vh] bg-[#ffffff] w-fit border-r-[#ececec] border-r border-solid px-2 '>
@@ -25,11 +30,10 @@ function SideBar() {
                     <IoList color='#808285' size={24} />
                     <span className='text-[#555259] '>Upload List</span>
                 </div>
-                <div className='absolute bottom-10 w-max'>
+                <div onClick={handleLogOut} className=' absolute bottom-10 w-max'>
                     <div className='flex gap-5  hover:bg-Neutral1 rounded-lg cursor-pointer p-3  active:bg-Neutral2'>
                         <IoLogOutOutline color='#808285' size={24} />
                         <span className='text-[#555259] '>Logout</span>
-
                     </div>
                 </div>
             </div>

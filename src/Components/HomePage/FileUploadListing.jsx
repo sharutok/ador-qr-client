@@ -19,44 +19,27 @@ import { BsQrCode } from "react-icons/bs";
 import { abbr } from '../../HelperComponents/Static';
 import { MdDelete } from "react-icons/md";
 import LoadingSpinner from '../../HelperComponents/LoadingSpinner';
-
+import { RiExpandUpDownLine } from "react-icons/ri";
 
 function FileUploadListing() {
     const [search, setSearch] = useState('')
+    const [uploadedDate, setUploadedDate] = useState(false)
+
     const { data, isLoading } = useQuery({
-        queryKey: ['todos', search],
+        queryKey: ['todos', search, uploadedDate],
         queryFn: async () => {
-            const res = await axios.get(`${api.main.all_data}/?search=${search}`)
+            const res = await axios.get(`${api.main.all_data}/?search=${search}&uploaded_date=${uploadedDate}`)
             return res
         },
         refetchInterval: Infinity,
     })
 
     const thead = [
-        // {
-        //     thead_name: 'ID',
-        //     sortSymbol: false
-        // },
-        {
-            thead_name: 'File name',
-            sortSymbol: false
-        },
-        {
-            thead_name: `Batch Number`,
-            sortSymbol: true
-        },
-        {
-            thead_name: 'Uploaded Date',
-            sortSymbol: false
-        },
-        {
-            thead_name: 'No of times viewed',
-            sortSymbol: true
-        },
-        {
-            thead_name: 'Actions',
-            sortSymbol: false
-        },
+        'File name',
+        `Batch Number`,
+        'Uploaded Date',
+        'No of times viewed',
+        'Actions',
     ]
 
     async function handleDownloadOriginalPdf(file_name, id) {
@@ -108,29 +91,43 @@ function FileUploadListing() {
                     </Paper>
                 </div>
                 <div>
-                    <Table thead={thead} tbody={
-                        <>
-                            {isLoading && <LoadingSpinner />}
-                            {!isLoading && data?.data?.results?.map((v, i) => {
-                                return <>
-                                    <tr key={i}>
-                                        <td>{v.file_name}</td>
-                                        <td>{v.batch_number}</td>
-                                        <td>{v.created_at}</td>
-                                        <td >{v.no_of_times_viewed}</td>
-                                        <td className='flex justify-center'>{
-                                            <CollOfActions
-                                                file_name={v.file_name}
-                                                id={v.id}
-                                                handleDownloadOriginalPdf={handleDownloadOriginalPdf}
-                                                handleDownloadQrEmbeddedPdf={handleDownloadQrEmbeddedPdf}
-                                                handleDelete={handleDelete} />
-                                        }</td>
-                                    </tr>
-                                </>
-                            })}
-                        </>
-                    } />
+                    <div className='table-container '>
+                        <table className='table w-[100%]'>
+                            <thead className='thead'>
+                                <tr >
+                                    <th className='th' >File name</th>
+                                    <th className='th' >Batch Number </th>
+                                    <th className='th' >Uploaded Date {<IconButton onClick={() => setUploadedDate(!uploadedDate)} >{<RiExpandUpDownLine size='20' color="#ffff" className='cursor-pointer' />}</IconButton>}</th>
+                                    <th className='th' >No of times viewed</th>
+                                    <th className='th' >Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {isLoading && <LoadingSpinner />}
+                                {!isLoading && data?.data?.results?.map((v, i) => {
+                                    console.log(v);
+                                    return <>
+                                        <tr key={i}>
+                                            <td>
+                                                <abbr title={v.id}>{v.file_name}</abbr>
+                                            </td>
+                                            <td>{v.batch_number}</td>
+                                            <td>{v.created_at}</td>
+                                            <td >{v.no_of_times_view ? v.no_of_times_view : 0}</td>
+                                            <td className='flex justify-center'>{
+                                                <CollOfActions
+                                                    file_name={v.file_name}
+                                                    id={v.id}
+                                                    handleDownloadOriginalPdf={handleDownloadOriginalPdf}
+                                                    handleDownloadQrEmbeddedPdf={handleDownloadQrEmbeddedPdf}
+                                                    handleDelete={handleDelete} />
+                                            }</td>
+                                        </tr>
+                                    </>
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <CPagination />
@@ -151,10 +148,10 @@ const CollOfActions = ({ handleDownloadOriginalPdf, handleDownloadQrEmbeddedPdf,
             <IconButton onClick={() => handleDownloadQrEmbeddedPdf(id)}>
                 {abbr("Downlaad QR Embedded PDF", <BsQrCode className='cursor-pointer' color='#555259' size={20} />)}
             </IconButton>
-            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-            <IconButton onClick={() => handleDelete()}>
+            {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}
+            {/* <IconButton onClick={() => handleDelete()}>
                 {abbr("Delete", <MdDelete className='cursor-pointer' color='#555259' size={22} />)}
-            </IconButton>
+            </IconButton> */}
         </div>
     )
 }

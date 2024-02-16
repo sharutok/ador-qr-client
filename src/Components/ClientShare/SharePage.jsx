@@ -8,8 +8,26 @@ import { api } from '../../HelperComponents/Api';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import { useParams } from 'react-router-dom';
 
 export default function () {
+    const { id } = useParams()
+    console.log(id);
+
+    const onClickDownloadOriginalPDF = async (e) => {
+        e.preventDefault()
+        try {
+            if (e.target.email.value) {
+                const response = await axios.post(api.main.for_client_download_pdf, {
+                    email_id: e.target.email.value, file_name: id, _id: id
+                })
+                response?.data?.data && window.open(response?.data?.data, window.location.reload())
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     return (
         <div>
@@ -26,7 +44,7 @@ export default function () {
                 <div className='flex justify-center relative p-5 '>
                     <div className='grid gap-5 w-[30rem]'>
                         <span className='text-[1.5rem]'>Please provide your email address to access the document</span>
-                        <LoginBody />
+                        <LoginBody onClickDownloadOriginalPDF={onClickDownloadOriginalPDF} />
                     </div>
                 </div>
             </div>
@@ -34,14 +52,9 @@ export default function () {
     )
 }
 
-
-
-function LoginBody() {
+function LoginBody(props) {
     const { btnSaving, setBtnSaving, userLogin, setUserLogin } = useContext(AppContext)
-
-    async function onSubmit(e) {
-        console.log(e);
-    }
+    const { onClickDownloadOriginalPDF } = props
 
     function handleOnChange(e) {
         let name = e.target.name
@@ -52,45 +65,42 @@ function LoginBody() {
     return (
         <div className='scale-[80%] sm:scale-[70%] md:scale-[80%] lg:scale-100 xl:scale-100 2xl:scale-100'>
             <div  >
-                <form onSubmit={onSubmit} >
-                    <div className='grid gap-4 '>
-                        <Typography className='text-[#7e8388]'>Email Address</Typography>
-                        <TextField sx={{
-                            "& fieldset": { border: 'none' },
-                        }}
+                {/* <form onSubmit={onSubmit} > */}
+                <form className='grid gap-4 ' onSubmit={onClickDownloadOriginalPDF} >
+                    <Typography className='text-[#7e8388]'>Email Address</Typography>
+                    <TextField sx={{
+                        "& fieldset": { border: 'none' },
+                    }}
+                        fullWidth
+                        className='bg-[#ffebeb] rounded-md '
+                        type='email'
+                        name="email"
+                        size='small'
+                        placeholder="Enter Email Address"
+                        variant="outlined"
+                        required
+                        onChange={handleOnChange} />
+                    <div className='mt-12 ' >
+                        <LoadingButton
+                            disableElevation
                             fullWidth
-                            className='bg-[#ffebeb] rounded-md '
-                            type='email'
-                            name="email"
-                            size='small'
-                            placeholder="Enter Email Address"
-                            variant="outlined"
-                            required
-                            onChange={handleOnChange} />
-                        <div className='mt-12' >
-                            <LoadingButton
-                                disableElevation
-                                fullWidth
-                                size="small"
-                                sx={{
-                                    bgcolor: "#b1bac2",
-                                    ml: 1,
-                                    "&.MuiButtonBase-root:hover": {
-                                        bgcolor: "#b1bac2"
-                                    }
-                                }}
-                                variant="contained"
-                                type="submit"
-                                loading={btnSaving}
-                                loadingPosition="start"
-                            >
-                                <span className='p-1'>Submit</span>
-                            </LoadingButton>
-                        </div>
+                            size="small"
+                            sx={{
+                                bgcolor: "#b1bac2",
+                                "&.MuiButtonBase-root:hover": {
+                                    bgcolor: "#b1bac2"
+                                }
+                            }}
+                            variant="contained"
+                            type="submit"
+                            loading={btnSaving}
+                            loadingPosition="start">
+                            <span className='p-1'>Submit</span>
+                        </LoadingButton>
                     </div>
-
                 </form>
             </div>
+
             <p className='text-[#565758] text-center text-[0.9rem] mt-3'>{moment().format('YYYY')} adorwelding.com</p>
         </div >
     )

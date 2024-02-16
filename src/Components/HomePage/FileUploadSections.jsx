@@ -10,13 +10,15 @@ import axios from 'axios'
 import { api } from '../../HelperComponents/Api';
 import { AppContext } from '../../App';
 import Divider from '@mui/material/Divider';
+import LoadingButtonWithSnack from '../../HelperComponents/LoadingBtn';
+import BarSnack from '../../HelperComponents/BarSnack';
 
 
 const formData = new FormData()
 
 const FileUploadSections = () => {
     const [files, setFiles] = useState([]);
-    const { ocrValue, setOCRValue, formValue, setFormValue, selectedSuggestion, setSelectedSuggestion } = useContext(AppContext)
+    const { ocrValue, setOCRValue, formValue, setFormValue, selectedSuggestion, setSnack, setBtnSaving, snack, setSelectedSuggestion } = useContext(AppContext)
     const handleDrop = (e) => {
         e.preventDefault();
         const droppedFiles = Array.from(e.dataTransfer.files);
@@ -40,10 +42,18 @@ const FileUploadSections = () => {
             e.preventDefault()
             formData.append('pdf_loc', files[0])
             formData.append('file_name', files[0]?.['name'])
-            Object.entries(formValue).map(ent => {
-                formData.append(ent[0], ent[1])
-            })
-            const response = await axios.post(api.utils.submit_pdf, formData)
+            if (formValue.batch_number) {
+                Object.entries(formValue).map(ent => {
+                    formData.append(ent[0], ent[1])
+                })
+                setBtnSaving(true)
+                const response = await axios.post(api.utils.submit_pdf, formData)
+                setBtnSaving(false)
+                window.location.reload()
+            }
+            else {
+                setSnack({ ...snack, status: true, message: 'Batch number is required' });
+            }
         }
         catch (error) {
             console.log(error);
@@ -54,11 +64,20 @@ const FileUploadSections = () => {
         e.preventDefault()
         formData.append('pdf_loc', files[0])
         formData.append('file_name', files[0]?.['name'])
-        Object.entries(formValue).map(ent => {
-            formData.append(ent[0], ent[1])
-        })
-        const response = await axios.post(api.utils.read_text_from_pdf, formData)
-        setOCRValue(response?.data?.data)
+        if (files[0]?.['name']) {
+            Object.entries(formValue).map(ent => {
+                formData.append(ent[0], ent[1])
+            })
+            setBtnSaving(true)
+            const response = await axios.post(api.utils.read_text_from_pdf, formData)
+            await Promise.resolve(setOCRValue(response?.data?.data))
+            setSelectedSuggestion(false)
+            setBtnSaving(false)
+            set
+        } else {
+            setSnack({ ...snack, status: true, message: 'Batch number is required' });
+        }
+
     }
 
     function handleClear() {
@@ -68,20 +87,18 @@ const FileUploadSections = () => {
     return (
         <div className='grid gap-5 mt-5 justify-center'>
             <div className='grid grid-cols-1 gap-10 w-fit'>
-                <div className='rounded-xl grid gap-10 ml-10'>
+                <div className='rounded-xl grid gap-10 '>
                     <div className='grid gap-2'>
                         <div
                             className='cursor-[pointer] p-[5vw] border-[2px] border-dashed rounded-lg border-Neutral3 grid gap-4 mt-5'
                             onClick={() => document.querySelector('input[type=file]').click()}
                             onDrop={handleDrop}
-                            onDragOver={(e) => e.preventDefault()}
-                        >
+                            onDragOver={(e) => e.preventDefault()}>
                             <input
                                 type="file"
                                 accept="application/pdf"
                                 onChange={handleFileInputChange}
-                                style={{ display: 'none' }}
-                            />
+                                style={{ display: 'none' }} />
                             <div className='flex justify-center'>
                                 <TbFileUpload size={50} color={'#090406'} />
                             </div>
@@ -94,11 +111,16 @@ const FileUploadSections = () => {
                     </div>
                     <SuggestName handleOnChange={handleOnChange} />
                 </div>
+                <BarSnack />
                 <SelectedFiles files={files} />
                 <div className='flex justify-center gap-5'>
-                    {(!selectedSuggestion || formValue?.batch_number) && <Button onClick={handleSubmit} className='w-fit' size='large' disableElevation sx={{ bgcolor: "#555259" }} variant="contained">Embed and Upload</Button>}
-                    {(selectedSuggestion || ocrValue?.length > 0) && <Button onClick={handleProceed} className='w-fit ' size='large' disableElevation sx={{ bgcolor: "#555259" }} variant="contained">Proceed</Button>}
-                    <Button onClick={handleProceed} className='w-fit ' size='large' disableElevation sx={{ bgcolor: "#555259" }} variant="contained">Reset</Button>
+                    {(!selectedSuggestion) &&
+                        <LoadingButtonWithSnack afterName={"Uploading"} beforeName={"Embed and Upload"} onClick={handleSubmit} />
+                    }
+                    {(selectedSuggestion) &&
+                        <LoadingButtonWithSnack afterName={"Processing"} beforeName={"Proceed"} onClick={handleProceed} />
+                    }
+                    <Button onClick={() => window.location.reload()} className='w-fit ' size='large' disableElevation sx={{ bgcolor: "#555259" }} variant="contained">Reset</Button>
                 </div>
             </div>
         </div>
@@ -106,12 +128,13 @@ const FileUploadSections = () => {
 };
 
 const SuggestName = ({ handleOnChange }) => {
-
     const { ocrValue, formValue, setFormValue, selectedSuggestion, setSelectedSuggestion } = useContext(AppContext)
     return (
         <div className='grid gap-2 border-[2px] border-[#cfcfcf]  rounded-md p-5'>
             <TextField type='number' value={formValue.batch_number} onChange={handleOnChange} fullWidth size='small' id="outlined-basic" variant="outlined" name='batch_number' placeholder='Enter Batch Number' />
+
             <div className='flex gap-2 justify-center '>
+
                 {ocrValue?.map((x, i) => {
                     return (
                         <div onClick={() => { setFormValue({ batch_number: x }) }} key={i} className='bg-Neutral1 p-1 px-2 rounded-xl border-[2px] border-[#8d8d8d] cursor-pointer hover:bg-Neutral2'>
