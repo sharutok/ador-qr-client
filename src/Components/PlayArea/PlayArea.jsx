@@ -1,6 +1,6 @@
 import React from 'react'
 import FileUploadListing from '../HomePage/FileUploadListing'
-import FileUploadSections from '../HomePage/FIleUploadSections'
+import FileUploadSections from '../HomePage/FileUploadSections'
 import { moduleAtom } from '../../HelperComponents/hookes'
 import { useAtom } from 'jotai'
 
