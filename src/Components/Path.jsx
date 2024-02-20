@@ -17,8 +17,7 @@ function Path() {
                 </Routes>
             </Router>
         </>
-    } else {
-
+    } else if (getCookies()[0]) {
         return (
             <Router>
                 <Routes>
@@ -30,6 +29,13 @@ function Path() {
                 </Routes>
             </Router>
         )
+    }
+    else {
+        <Router>
+            <Routes>
+                <Route path='/share/:id' element={<SharePage />} />
+            </Routes>
+        </Router>
     }
 
 }

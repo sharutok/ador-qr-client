@@ -18,7 +18,6 @@ function LoadingButtonWithSnack({ afterName, beforeName, onClick }) {
                     sx={{ bgcolor: "#555259", p: 1 }}
                     variant="contained"
                     type="submit"
-                    // sx={{ width: "10rem" }}
                     loading={btnSaving}
                     startIcon={<></>}
                     loadingPosition="start"
