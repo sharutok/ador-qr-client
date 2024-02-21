@@ -6,8 +6,7 @@ function LoadingButtonWithSnack({ afterName, beforeName, onClick }) {
     const { btnSaving } = useContext(AppContext)
     return (
         <>
-            <div
-            >
+            <div>
                 <LoadingButton
                     ref={null}
                     fullWidth
@@ -20,8 +19,7 @@ function LoadingButtonWithSnack({ afterName, beforeName, onClick }) {
                     type="submit"
                     loading={btnSaving}
                     startIcon={<></>}
-                    loadingPosition="start"
-                >
+                    loadingPosition="start">
                     {btnSaving ? <p>{afterName}</p> : <p>{beforeName}</p>}
                 </LoadingButton>
             </div>

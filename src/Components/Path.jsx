@@ -24,7 +24,6 @@ function Path() {
                     <Route path="/" element={<Navigate to="/login" replace />} />
                     <Route path='/login' element={<LoginPage />} />
                     <Route path='/home' element={<HomePage />} />
-                    <Route path='/share/:id' element={<SharePage />} />
                     <Route path='*' element={<ErrorPage404NotFound />} />
                 </Routes>
             </Router>

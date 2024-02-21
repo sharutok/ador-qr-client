@@ -17,7 +17,6 @@ export default function Table({ thead, tbody }) {
                                         {h}
                                     </ >
                                 </th>
-
                             )
                         })}
                     </tr>
