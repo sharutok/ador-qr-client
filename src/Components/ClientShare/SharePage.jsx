@@ -24,7 +24,7 @@ export default function () {
                 window.open(response?.data?.data)
                 response?.data?.data && setTimeout(() => {
                     window.location.reload()
-                }, 2500)
+                }, 3000)
             }
         } catch (error) {
             console.log(error)
