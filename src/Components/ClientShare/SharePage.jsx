@@ -21,10 +21,10 @@ export default function () {
                 const response = await axios.post(api.main.for_client_download_pdf, {
                     email_id: e.target.email.value, file_name: id, _id: id
                 })
-                response?.data?.data &&
-                    setTimeout(() => {
-                        window.open(response?.data?.data, window.location.reload())
-                    }, 2000)
+                window.open(response?.data?.data)
+                response?.data?.data && setTimeout(() => {
+                    window.location.reload()
+                }, 2500)
             }
         } catch (error) {
             console.log(error)
