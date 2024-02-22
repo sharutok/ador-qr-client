@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import Table from '../../Table'
 import CPagination from '../../HelperComponents/Pagination';
 import {
@@ -20,19 +20,26 @@ import { abbr } from '../../HelperComponents/Static';
 import { MdDelete } from "react-icons/md";
 import LoadingSpinner from '../../HelperComponents/LoadingSpinner';
 import { RiExpandUpDownLine } from "react-icons/ri";
+import { AppContext } from '../../App';
 
 function FileUploadListing() {
+    const { count, setCount, page, setPage } = useContext(AppContext)
     const [search, setSearch] = useState('')
     const [uploadedDate, setUploadedDate] = useState(false)
 
     const { data, isLoading } = useQuery({
-        queryKey: ['todos', search, uploadedDate],
+        queryKey: ['todos', search, uploadedDate, page],
         queryFn: async () => {
-            const res = await axios.get(`${api.main.all_data}/?search=${search}&uploaded_date=${uploadedDate}`)
+            const res = await axios.get(`${api.main.all_data}/?search=${search}&uploaded_date=${uploadedDate}&page=${page}`)
             return res
         },
         refetchInterval: Infinity,
     })
+
+    useEffect(() => {
+        setCount(Math.ceil(data?.data?.count / 10))
+    })
+
 
     const thead = [
         'File name',
@@ -45,7 +52,6 @@ function FileUploadListing() {
     async function handleDownloadOriginalPdf(file_name, id) {
         try {
             const response = await axios.get(`${api.utils.download_original_pdf}/?id=${id}&file_name=${file_name}`)
-            console.log(String(response?.data?.data));
             window.open(response?.data?.data, '_blank')
         } catch (error) {
             console.log(error);
@@ -55,7 +61,6 @@ function FileUploadListing() {
     async function handleDownloadQrEmbeddedPdf(id) {
         try {
             const response = await axios.get(`${api.utils.download_embedded_pdf}/?id=${id}`)
-            console.log(String(response?.data?.data));
             window.open(response?.data?.data, '_blank')
         } catch (error) {
             console.log(error);
@@ -105,7 +110,7 @@ function FileUploadListing() {
                             <tbody>
                                 {isLoading && <LoadingSpinner />}
                                 {!isLoading && data?.data?.results?.map((v, i) => {
-                                    console.log(v);
+
                                     return <>
                                         <tr key={i}>
                                             <td>

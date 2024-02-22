@@ -19,15 +19,24 @@ const formData = new FormData()
 const FileUploadSections = () => {
     const [files, setFiles] = useState([]);
     const { ocrValue, setOCRValue, formValue, setFormValue, selectedSuggestion, setSnack, setBtnSaving, snack, setSelectedSuggestion } = useContext(AppContext)
+
     const handleDrop = (e) => {
         e.preventDefault();
-        const droppedFiles = Array.from(e.dataTransfer.files);
-        setFiles([...files, ...droppedFiles]);
+        if (!files.length) {
+            const droppedFiles = Array.from(e.dataTransfer.files);
+            setFiles([...files, ...droppedFiles]);
+        } else {
+            setSnack({ ...snack, status: true, message: 'Only one PDF is allowed at a time' });
+        }
     };
 
     const handleFileInputChange = (e) => {
-        const selectedFiles = Array.from(e.target.files);
-        setFiles([...files, ...selectedFiles]);
+        if (!files.length) {
+            const selectedFiles = Array.from(e.target.files);
+            setFiles([...files, ...selectedFiles]);
+        } else {
+            setSnack({ ...snack, status: true, message: 'Only one PDF is allowed at a time' });
+        }
     };
 
     const handleOnChange = (e) => {
@@ -42,7 +51,7 @@ const FileUploadSections = () => {
             e.preventDefault()
             formData.append('pdf_loc', files[0])
             formData.append('file_name', files[0]?.['name'])
-            if (formValue.batch_number) {
+            if (formValue.batch_number && files[0]) {
                 Object.entries(formValue).map(ent => {
                     formData.append(ent[0], ent[1])
                 })
@@ -52,7 +61,8 @@ const FileUploadSections = () => {
                 window.location.reload()
             }
             else {
-                setSnack({ ...snack, status: true, message: 'Batch number is required' });
+                !formValue.batch_number && setSnack({ ...snack, status: true, message: 'Batch number is required' });
+                !files[0] && setSnack({ ...snack, status: true, message: 'Upload PDF' });
             }
         }
         catch (error) {
@@ -73,16 +83,13 @@ const FileUploadSections = () => {
             await Promise.resolve(setOCRValue(response?.data?.data))
             setSelectedSuggestion(false)
             setBtnSaving(false)
-            set
         } else {
-            setSnack({ ...snack, status: true, message: 'Batch number is required' });
+            !files[0] && setSnack({ ...snack, status: true, message: 'Upload PDF' });
         }
 
     }
 
-    function handleClear() {
 
-    }
 
     return (
         <div className='grid gap-5 mt-5 justify-center'>
@@ -112,7 +119,7 @@ const FileUploadSections = () => {
                     <SuggestName handleOnChange={handleOnChange} />
                 </div>
                 <BarSnack />
-                <SelectedFiles files={files} />
+                <SelectedFiles files={files} setFiles={setFiles} />
                 <div className='flex justify-center gap-5'>
                     {(!selectedSuggestion) &&
                         <LoadingButtonWithSnack afterName={"Uploading"} beforeName={"Embed and Upload"} onClick={handleSubmit} />
@@ -161,7 +168,10 @@ const SuggestName = ({ handleOnChange }) => {
     )
 }
 
-const SelectedFiles = ({ files }) => {
+const SelectedFiles = ({ files, setFiles }) => {
+    function handleDelete() {
+        setFiles((x) => [])
+    }
     return (
         <>
             {files.length > 0 && (
@@ -181,7 +191,7 @@ const SelectedFiles = ({ files }) => {
                                     </div>
                                     <div className='mt-2'>
                                         <abbr title="delete file">
-                                            <IoCloseSharp size={24} className='cursor-pointer mt-1' color='#ED1C24' />
+                                            <IoCloseSharp onClick={() => handleDelete()} size={24} className='cursor-pointer mt-1' color='#ED1C24' />
                                         </abbr>
                                     </div>
                                 </div>
