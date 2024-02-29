@@ -22,7 +22,7 @@ function App() {
   const [ocrValue, setOCRValue] = useState([])
   const [selectedSuggestion, setSelectedSuggestion] = useState(false);
   const [formValue, setFormValue] = useState({
-    batch_number: null
+    batch_number: null, file_type: ''
   })
   const [module, setModule] = useState(0)
   const [dialogBopen, setDialogBOpen] = useState(false);
