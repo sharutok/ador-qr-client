@@ -12,6 +12,7 @@ import Divider from '@mui/material/Divider';
 import LoadingButtonWithSnack from '../../HelperComponents/LoadingBtn';
 import BarSnack from '../../HelperComponents/BarSnack';
 import { file_type } from '../../HelperComponents/Static';
+import { getCookies } from '../../HelperComponents/CookiesS';
 
 
 const formData = new FormData()
@@ -51,6 +52,8 @@ const FileUploadSections = () => {
             e.preventDefault()
             formData.append('pdf_loc', files[0])
             formData.append('file_name', files[0]?.['name'])
+            getCookies()[2] !== "both" && formData.append("file_type", getCookies()[2])
+
             if (formValue.batch_number && files[0]) {
                 Object.entries(formValue).map(ent => {
                     formData.append(ent[0], ent[1])
@@ -59,8 +62,7 @@ const FileUploadSections = () => {
                 await axios.post(api.utils.submit_pdf, formData)
                 setBtnSaving(false)
                 setSnack({ ...snack, status: true, message: 'Finished Uploading' });
-                setFormValue({ batch_number: "" })
-                setFiles([])
+                window.location.reload()
 
             }
             else {
@@ -89,10 +91,7 @@ const FileUploadSections = () => {
         } else {
             !files[0] && setSnack({ ...snack, status: true, message: 'Upload PDF' });
         }
-
     }
-
-
 
     return (
         <div className='grid gap-5 mt-5 justify-center'>
@@ -139,12 +138,12 @@ const FileUploadSections = () => {
     );
 };
 
-const SuggestName = ({ handleOnChange }) => {
+const SuggestName = () => {
     const { ocrValue, formValue, setFormValue, selectedSuggestion, setSelectedSuggestion } = useContext(AppContext)
     return (
         <div className='grid gap-4 border-[2px] border-[#cfcfcf]  rounded-md p-5'>
-            <TextField value={formValue.batch_number} onChange={handleOnChange} fullWidth size='small' id="outlined-basic" variant="outlined" name='batch_number' placeholder='Enter File name' />
-            <Autocomplete
+            {<TextField value={formValue.batch_number} onChange={(e) => setFormValue({ ...formValue, batch_number: e.target.value })} fullWidth size='small' id="outlined-basic" variant="outlined" name='batch_number' placeholder='Enter File name' />}
+            {getCookies()[2] === "both" && <Autocomplete
                 value={formValue.file_type}
                 disablePortal
                 id="combo-box-demo"
@@ -152,7 +151,7 @@ const SuggestName = ({ handleOnChange }) => {
                 size='small'
                 onChange={(x, y) => setFormValue({ ...formValue, file_type: y })}
                 renderInput={(params) => <TextField  {...params} label="File Type" />}
-            />
+            />}
             <div className='flex gap-2 justify-center '>
                 {ocrValue?.map((x, i) => {
                     return (
@@ -162,7 +161,7 @@ const SuggestName = ({ handleOnChange }) => {
                     )
                 })}
             </div>
-            {/* <Divider>OR</Divider>
+            <Divider>OR</Divider>
             <div onClick={() => setSelectedSuggestion(!selectedSuggestion)} className='flex justify-center '>
                 <div className='button-a p-1 rounded-xl'>
                     <div style={{ backgroundColor: !selectedSuggestion && '#F3F4F6', }} className='button flex p-2 gap-3 active:bg-Neutral2 cursor-pointer w-fit rounded-xl'>
@@ -170,7 +169,7 @@ const SuggestName = ({ handleOnChange }) => {
                         <span className='text-Neutral7 font-bold'>Click to let application detect batch number</span>
                     </div>
                 </div>
-            </div> */}
+            </div>
             {/* <div className='grid justify-center'>
                 <FormGroup>
                     <FormControlLabel control={<Checkbox />} label="Save Copy" />

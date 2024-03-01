@@ -21,16 +21,18 @@ import { MdDelete } from "react-icons/md";
 import LoadingSpinner from '../../HelperComponents/LoadingSpinner';
 import { RiExpandUpDownLine } from "react-icons/ri";
 import { AppContext } from '../../App';
+import { getCookies } from '../../HelperComponents/CookiesS';
 
 function FileUploadListing() {
     const { count, setCount, page, setPage } = useContext(AppContext)
     const [search, setSearch] = useState('')
     const [uploadedDate, setUploadedDate] = useState(false)
+    const file_upload_type = getCookies()[2]
 
     const { data, isLoading } = useQuery({
         queryKey: ['todos', search, uploadedDate, page],
         queryFn: async () => {
-            const res = await axios.get(`${api.main.all_data}/?search=${search}&uploaded_date=${uploadedDate}&page=${page}`)
+            const res = await axios.get(`${api.main.all_data}/?search=${search}&uploaded_date=${uploadedDate}&page=${page}&file_upload_type=${file_upload_type}`)
             return res
         },
         refetchInterval: Infinity,
@@ -146,10 +148,10 @@ export default FileUploadListing
 const CollOfActions = ({ handleDownloadOriginalPdf, handleDownloadQrEmbeddedPdf, handleDelete, file_name, id }) => {
     return (
         <div className='flex gap-8'>
-            <IconButton onClick={() => handleDownloadOriginalPdf(file_name, id)}>
+            {/* <IconButton onClick={() => handleDownloadOriginalPdf(file_name, id)}>
                 {abbr("Download Original PDF", <FaFilePdf className='cursor-pointer' color='#555259' size={20} />)}
-            </IconButton>
-            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+            </IconButton> */}
+            {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" /> */}
             <IconButton onClick={() => handleDownloadQrEmbeddedPdf(id)}>
                 {abbr("Downlaad QR Embedded PDF", <BsQrCode className='cursor-pointer' color='#555259' size={20} />)}
             </IconButton>

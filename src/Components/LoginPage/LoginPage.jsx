@@ -38,8 +38,9 @@ export default function Page() {
 
 
 function LoginBody() {
-    const { btnSaving, setBtnSaving, userLogin, setUserLogin } = useContext(AppContext)
+    const { btnSaving, userLogin, setUserLogin } = useContext(AppContext)
     const [error, setError] = useState("")
+
 
 
     async function onSubmit(e) {
@@ -52,7 +53,7 @@ function LoginBody() {
             const response = await axios.post(api.login.verify, data)
             console.log(response?.data);
             if (response?.data?.status === 200) {
-                setCookies([response?.data?.emp_no])
+                setCookies([response?.data?.emp_no, response?.data?.emp_id, response?.data?.file_type])
                 setError("")
                 window.location.href = "/home"
             } else {

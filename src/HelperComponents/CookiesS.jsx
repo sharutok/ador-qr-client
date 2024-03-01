@@ -2,7 +2,7 @@ import Cookies from "universal-cookie";
 import React from 'react'
 const cookies = new Cookies()
 
-let cookieName = ["emp_code"]
+let cookieName = ["emp_code", "emp_id", "file_type"]
 
 export const setCookies = (cookieValues) => {
     cookieName.map((x, i) => {
