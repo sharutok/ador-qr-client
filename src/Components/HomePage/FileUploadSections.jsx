@@ -18,6 +18,7 @@ import { getCookies } from '../../HelperComponents/CookiesS';
 const formData = new FormData()
 
 const FileUploadSections = () => {
+    const file_type = getCookies()[2]
     const [files, setFiles] = useState([]);
     const { ocrValue, setOCRValue, formValue, setFormValue, selectedSuggestion, setSnack, setBtnSaving, snack, setSelectedSuggestion } = useContext(AppContext)
 
@@ -50,14 +51,14 @@ const FileUploadSections = () => {
     const handleSubmit = async (e) => {
         try {
             e.preventDefault()
-            formData.append('pdf_loc', files[0])
-            formData.append('file_name', files[0]?.['name'])
-            getCookies()[2] !== "both" && formData.append("file_type", getCookies()[2])
 
             if (formValue.batch_number && files[0]) {
-                Object.entries(formValue).map(ent => {
-                    formData.append(ent[0], ent[1])
-                })
+                formData.append('batch_number', formValue.batch_number)
+                formData.append('pdf_loc', files[0])
+                formData.append('file_name', files[0]?.['name'])
+                file_type === "both" ? formData.append('file_type', formValue.file_type) : formData.append('file_type', file_type)
+
+
                 setBtnSaving(true)
                 await axios.post(api.utils.submit_pdf, formData)
                 setBtnSaving(false)
