@@ -182,3 +182,8 @@ tbody {
   border: 1px solid black;
   /* background-color: red; */
 }
+
+iframe {
+  width: 100%;
+  height: 100%;
+}

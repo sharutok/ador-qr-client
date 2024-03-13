@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import IMAGES from '../../assets/Image/Image';
 import { LoadingButton } from '@mui/lab';
 import { AppContext } from '../../App'
@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 
 export default function () {
     const { id } = useParams()
-    console.log(id);
+    const [link, setLink] = useState()
 
     const onClickDownloadOriginalPDF = async (e) => {
         e.preventDefault()
@@ -21,36 +21,46 @@ export default function () {
                 const response = await axios.post(api.main.for_client_download_pdf, {
                     email_id: e.target.email.value, file_name: id, _id: id
                 })
-                window.open(response?.data?.data)
-                response?.data?.data && setTimeout(() => {
-                    window.location.reload()
-                }, 3000)
+                setLink(response?.data?.data)
+                console.log(response?.data?.data);
+
             }
         } catch (error) {
             console.log(error)
         }
     }
 
+    useEffect(() => {
+        onClickDownloadOriginalPDF()
+    }, [])
 
     return (
         <div>
             <div className='flex justify-left p-5 gap-5 mb-9'>
                 <div className='flex justify-center'>
-                    <img loading='lazy' style={{ fontFamily: "Archive" }} src={IMAGES.ador_star_logo} alt="Ador" width={"50"} height={"50"} />
+                    <img loading='lazy' style={{ fontFamily: "Archive" }} src={IMAGES.ador_star_logo} alt="Ador" width={"40"} height={"50"} />
                 </div>
                 <div className='px-1 py-2'>
                     <Divider sx={{ borderColor: "#555259" }} orientation='vertical' />
                 </div>
-                <span align="center" style={{ fontFamily: "Archive" }} className=' text-[1.9rem] mt-1 text-[#555259] font-extrabold'>ADOR<span className='text-red-600 font-bold'> QR</span></span>
+                <span align="center" style={{ fontFamily: "Archive" }} className=' text-[1.5rem] mt-1 text-[#555259] font-extrabold'>ADOR<span className='text-red-600 font-bold'> QR</span></span>
             </div>
             <div >
-                <div className='flex justify-center relative p-5 '>
+                {!link ? <div className='flex justify-center relative p-5 '>
                     <div className='grid gap-5 w-[30rem]'>
                         <span className='text-[1.5rem]'>Please provide your email address to access the document</span>
                         <LoginBody onClickDownloadOriginalPDF={onClickDownloadOriginalPDF} />
                     </div>
-                </div>
+                </div> :
+                    <div className='flex justify-center'>
+                        <div style={{ width: `${window.innerWidth / 25}rem`, height: `${window.innerHeight / 20}rem` }}>
+                            <iframe name='Test Certificate' src={link} />
+                        </div>
+                    </div>
+                }
             </div>
+
+
         </div>
     )
 }
@@ -79,7 +89,6 @@ function LoginBody(props) {
                         type='email'
                         name="email"
                         size='small'
-                        placeholder="Enter Email Address"
                         variant="outlined"
                         required
                         onChange={handleOnChange} />
