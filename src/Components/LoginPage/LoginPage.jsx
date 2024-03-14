@@ -51,7 +51,6 @@ function LoginBody() {
                 password: e.target.password.value,
             }
             const response = await axios.post(api.login.verify, data)
-            console.log(response?.data);
             if (response?.data?.status === 200) {
                 setCookies([response?.data?.emp_no, response?.data?.emp_id, response?.data?.file_type])
                 setError("")

@@ -9,20 +9,24 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { useParams } from 'react-router-dom';
+import { GoDownload } from "react-icons/go";
+
 
 export default function () {
     const { id } = useParams()
-    const [link, setLink] = useState()
+    const [pdfLink, setPdfLink] = useState()
+    const [imgLink, setImgLink] = useState()
 
     const onClickDownloadOriginalPDF = async (e) => {
         e.preventDefault()
         try {
             if (e.target.email.value) {
                 const response = await axios.post(api.main.for_client_download_pdf, {
-                    email_id: e.target.email.value, file_name: id, _id: id
+                    email_id: e.target.email.value, file_name: id, _id: id,
                 })
-                setLink(response?.data?.data)
-                console.log(response?.data?.data);
+
+                setPdfLink(response?.data?.data[0])
+                setImgLink(response?.data?.data[1])
 
             }
         } catch (error) {
@@ -46,21 +50,26 @@ export default function () {
                 <span align="center" style={{ fontFamily: "Archive" }} className=' text-[1.5rem] mt-1 text-[#555259] font-extrabold'>ADOR<span className='text-red-600 font-bold'> QR</span></span>
             </div>
             <div >
-                {!link ? <div className='flex justify-center relative p-5 '>
+                {!pdfLink ? <div className='flex justify-center relative p-5 '>
                     <div className='grid gap-5 w-[30rem]'>
                         <span className='text-[1.5rem]'>Please provide your email address to access the document</span>
                         <LoginBody onClickDownloadOriginalPDF={onClickDownloadOriginalPDF} />
                     </div>
                 </div> :
-                    <div className='flex justify-center'>
-                        <div style={{ width: `${window.innerWidth / 25}rem`, height: `${window.innerHeight / 20}rem` }}>
-                            <iframe name='Test Certificate' src={link} />
+                    <div className='grid gap-5'>
+                        <div className='flex justify-center '>
+                            <div className='w-fit'>
+                                <ButtonComponent onClick={() => { window.open(pdfLink, "_self") }} icon={<GoDownload color='white' size={"23"} />} btnName={"Download PDF"} />
+                            </div>
+                        </div>
+                        <div className='flex justify-center '>
+                            <div style={{ width: `${window.innerWidth / 30}rem`, height: `${window.innerHeight / 30}rem` }}>
+                                <img className='border border-solid border-[black] p-2 rounded-xl' src={imgLink} />
+                            </div>
                         </div>
                     </div>
                 }
             </div>
-
-
         </div>
     )
 }
@@ -81,9 +90,7 @@ function LoginBody(props) {
                 {/* <form onSubmit={onSubmit} > */}
                 <form className='grid gap-4 ' onSubmit={onClickDownloadOriginalPDF} >
                     <Typography className='text-[#7e8388]'>Email Address</Typography>
-                    <TextField sx={{
-                        "& fieldset": { border: 'none' },
-                    }}
+                    <TextField sx={{ "& fieldset": { border: 'none' }, }}
                         fullWidth
                         className='bg-[#ffebeb] rounded-md '
                         type='email'
@@ -112,8 +119,22 @@ function LoginBody(props) {
                     </div>
                 </form>
             </div>
-
             <p className='text-[#565758] text-center text-[0.9rem] mt-3'>{moment().format('YYYY')} adorwelding.com</p>
         </div >
+    )
+}
+
+const ButtonComponent = ({ onClick, icon, btnName, ...props }) => {
+    return (
+
+        <div
+            onClick={onClick}
+            {...props}
+            className=' no-underline rounded-full p-2 h-fit border-[#c7c7c7] bg-[#555259] flex justify-between px-4 cursor-pointer hover:bg-[#2c2c2c] active:bg-[#000000] transition-[1s]'>
+            <div className='no-underline'>
+                {icon}
+            </div>
+            {btnName && <span className='text-[#ebebeb] text-[15px] no-underline ml-2'>{btnName}</span>}
+        </div>
     )
 }

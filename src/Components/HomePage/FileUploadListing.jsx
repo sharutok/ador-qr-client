@@ -112,7 +112,6 @@ function FileUploadListing() {
                             <tbody>
                                 {isLoading && <LoadingSpinner />}
                                 {!isLoading && data?.data?.results?.map((v, i) => {
-
                                     return <>
                                         <tr key={i}>
                                             <td>
